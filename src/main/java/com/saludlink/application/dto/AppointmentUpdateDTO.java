@@ -1,8 +1,6 @@
 package com.saludlink.application.dto;
 
 import com.saludlink.domain.model.enums.AppointmentModality;
-import com.saludlink.domain.model.enums.AppointmentStatus;
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
@@ -14,37 +12,16 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class AppointmentResponseDTO {
+public class AppointmentUpdateDTO {
 
     @NotNull
-    private Long id;
-
-    private Long patientId;
-    private String patientName;
-
     private Long doctorId;
-
-    @NotBlank
-    private String doctorName;
-
-    @NotBlank
-    private String specialty;
-
-    private Long clinicId;
-    private String clinicName;
-
-    private Long branchId;
-    private String branchName;
-    private String branchAddress;
 
     @NotNull
     private LocalDateTime appointmentDate;
 
     @NotNull
     private AppointmentModality modality;
-
-    @NotNull
-    private AppointmentStatus status;
 
     private String notes;
 }

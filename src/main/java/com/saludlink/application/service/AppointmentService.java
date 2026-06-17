@@ -2,12 +2,15 @@ package com.saludlink.application.service;
 
 import com.saludlink.application.dto.AppointmentRequestDTO;
 import com.saludlink.application.dto.AppointmentResponseDTO;
+import com.saludlink.application.dto.AppointmentUpdateDTO;
 import com.saludlink.domain.model.enums.AppointmentStatus;
 import java.util.List;
 
 public interface AppointmentService {
 
     AppointmentResponseDTO createAppointment(Long patientId, AppointmentRequestDTO dto);
+
+    AppointmentResponseDTO updateAppointment(Long appointmentId, AppointmentUpdateDTO dto);
 
     List<AppointmentResponseDTO> getAppointmentsByPatient(Long patientId);
 

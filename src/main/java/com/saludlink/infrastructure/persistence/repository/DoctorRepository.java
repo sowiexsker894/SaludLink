@@ -11,17 +11,51 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface DoctorRepository extends JpaRepository<Doctor, Long> {
 
-    @Query("SELECT d FROM Doctor d WHERE d.user.id = :userId")
+    @Query("""
+            SELECT d FROM Doctor d
+            JOIN FETCH d.user
+            LEFT JOIN FETCH d.clinic
+            LEFT JOIN FETCH d.branch
+            WHERE d.user.id = :userId
+            """)
     Optional<Doctor> findByUserId(@Param("userId") Long userId);
 
-    @Query("SELECT DISTINCT d FROM Doctor d JOIN FETCH d.user WHERE d.specialty = :specialty")
+    @Query("""
+            SELECT DISTINCT d FROM Doctor d
+            JOIN FETCH d.user
+            LEFT JOIN FETCH d.clinic
+            LEFT JOIN FETCH d.branch
+            WHERE d.specialty = :specialty
+            AND d.verified = true
+            """)
     List<Doctor> findBySpecialty(@Param("specialty") String specialty);
 
-    @Query("SELECT DISTINCT d FROM Doctor d JOIN FETCH d.user WHERE d.verified = true")
+    @Query("""
+            SELECT DISTINCT d FROM Doctor d
+            JOIN FETCH d.user
+            LEFT JOIN FETCH d.clinic
+            LEFT JOIN FETCH d.branch
+            WHERE d.verified = true
+            """)
     List<Doctor> findByVerifiedTrue();
 
-    @Query("SELECT d FROM Doctor d JOIN FETCH d.user WHERE d.id = :id")
+    @Query("""
+            SELECT DISTINCT d FROM Doctor d
+            JOIN FETCH d.user
+            LEFT JOIN FETCH d.clinic
+            LEFT JOIN FETCH d.branch
+            WHERE d.id = :id
+            """)
     Optional<Doctor> findDetailById(@Param("id") Long id);
+
+    @Query("""
+            SELECT DISTINCT d FROM Doctor d
+            JOIN FETCH d.user
+            LEFT JOIN FETCH d.clinic
+            LEFT JOIN FETCH d.branch
+            WHERE d.clinic.id = :clinicId
+            """)
+    List<Doctor> findByClinicId(@Param("clinicId") Long clinicId);
 
     boolean existsByLicenseNumber(String licenseNumber);
 

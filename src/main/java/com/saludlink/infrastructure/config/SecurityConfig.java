@@ -5,6 +5,7 @@ import com.saludlink.infrastructure.security.JwtAuthenticationFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
@@ -53,12 +54,14 @@ public class SecurityConfig {
             DaoAuthenticationProvider authenticationProvider,
             CorsConfigurationSource corsConfigurationSource)
             throws Exception {
+
         http.csrf(AbstractHttpConfigurer::disable)
                 .cors(c -> c.configurationSource(corsConfigurationSource))
                 .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(
                         auth ->
-                                auth.requestMatchers(
+                                auth
+                                        .requestMatchers(
                                                 "/api/auth/register",
                                                 "/api/auth/login",
                                                 "/actuator/health",
@@ -71,10 +74,24 @@ public class SecurityConfig {
                                                 "/error",
                                                 "/favicon.ico")
                                         .permitAll()
+
+                                        // Rutas públicas necesarias para registro médico y agendamiento
+                                        .requestMatchers(HttpMethod.GET, "/api/clinics")
+                                        .permitAll()
+                                        .requestMatchers(HttpMethod.GET, "/api/clinics/*/branches")
+                                        .permitAll()
+                                        .requestMatchers(HttpMethod.GET, "/api/doctors")
+                                        .permitAll()
+                                        .requestMatchers(HttpMethod.GET, "/api/doctors/**")
+                                        .permitAll()
+                                        .requestMatchers(HttpMethod.GET, "/api/specialties")
+                                        .permitAll()
+
                                         .anyRequest()
                                         .authenticated())
                 .authenticationProvider(authenticationProvider)
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+
         return http.build();
     }
 }

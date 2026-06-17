@@ -10,55 +10,39 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
-import java.math.BigDecimal;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "doctors")
+@Table(name = "clinic_branches")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
-public class Doctor {
+public class ClinicBranch {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToOne(optional = false, fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false, unique = true)
-    @JsonIgnore
-    private User user;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "clinic_id")
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    @JoinColumn(name = "clinic_id", nullable = false)
     @JsonIgnore
     private Clinic clinic;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "branch_id")
-    @JsonIgnore
-    private ClinicBranch branch;
+    @Column(nullable = false)
+    private String name;
 
     @Column(nullable = false)
-    private String specialty;
+    private String address;
 
-    @Column(name = "license_number", nullable = false, unique = true)
-    private String licenseNumber;
+    private String ruc;
 
     @Column(nullable = false)
     @Builder.Default
-    private boolean verified = true;
-
-    @Column(columnDefinition = "TEXT")
-    private String biography;
-
-    @Column(name = "consultation_fee", precision = 10, scale = 2)
-    private BigDecimal consultationFee;
+    private boolean active = true;
 }

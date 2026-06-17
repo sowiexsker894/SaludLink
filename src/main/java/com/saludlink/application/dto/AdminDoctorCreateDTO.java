@@ -2,32 +2,43 @@ package com.saludlink.application.dto;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-/** Alta de médico por administrador (usuario con rol DOCTOR + fila {@code doctors}). */
+/** Alta de médico por administrador institucional. */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 public class AdminDoctorCreateDTO {
 
-    @NotBlank private String firstName;
+    @NotBlank
+    private String firstName;
 
-    @NotBlank private String lastName;
+    @NotBlank
+    private String lastName;
 
-    @NotBlank @Email private String email;
+    @NotBlank
+    @Email
+    private String email;
 
-    @NotBlank private String password;
+    @NotBlank
+    private String password;
 
     private String phone;
 
-    @NotBlank private String specialty;
+    @NotBlank
+    private String specialty;
 
-    @NotBlank private String licenseNumber;
+    @NotBlank
+    private String licenseNumber;
+
+    @NotNull
+    private Long branchId;
 
     private String biography;
 

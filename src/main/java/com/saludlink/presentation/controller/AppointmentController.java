@@ -3,6 +3,7 @@ package com.saludlink.presentation.controller;
 import com.saludlink.application.dto.AppointmentRequestDTO;
 import com.saludlink.application.dto.AppointmentResponseDTO;
 import com.saludlink.application.dto.AppointmentStatusUpdateDTO;
+import com.saludlink.application.dto.AppointmentUpdateDTO;
 import com.saludlink.application.service.AppointmentService;
 import com.saludlink.domain.model.entity.Patient;
 import com.saludlink.infrastructure.persistence.repository.PatientRepository;
@@ -35,7 +36,8 @@ public class AppointmentController {
     @PreAuthorize("hasRole('PATIENT')")
     public ResponseEntity<AppointmentResponseDTO> create(
             @AuthenticationPrincipal CustomUserDetails principal,
-            @Valid @RequestBody AppointmentRequestDTO dto) {
+            @Valid @RequestBody AppointmentRequestDTO dto
+    ) {
         Long patientId =
                 patientRepository
                         .findByUserId(principal.getUser().getId())
@@ -43,8 +45,21 @@ public class AppointmentController {
                         .orElseThrow(
                                 () ->
                                         new ResponseStatusException(
-                                                HttpStatus.BAD_REQUEST, "Perfil de paciente no encontrado"));
+                                                HttpStatus.BAD_REQUEST,
+                                                "Perfil de paciente no encontrado"
+                                        )
+                        );
+
         return ResponseEntity.ok(appointmentService.createAppointment(patientId, dto));
+    }
+
+    @PutMapping("/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN','PATIENT')")
+    public ResponseEntity<AppointmentResponseDTO> update(
+            @PathVariable Long id,
+            @Valid @RequestBody AppointmentUpdateDTO dto
+    ) {
+        return ResponseEntity.ok(appointmentService.updateAppointment(id, dto));
     }
 
     @GetMapping("/patient/{patientId}")
@@ -60,16 +75,18 @@ public class AppointmentController {
     }
 
     @PutMapping("/{id}/cancel")
-    @PreAuthorize("hasAnyRole('PATIENT','ADMIN')")
+    @PreAuthorize("hasAnyRole('PATIENT','DOCTOR','ADMIN')")
     public ResponseEntity<Void> cancel(@PathVariable Long id) {
         appointmentService.cancelAppointment(id);
         return ResponseEntity.noContent().build();
     }
 
     @PutMapping("/{id}/status")
-    @PreAuthorize("hasRole('DOCTOR')")
+    @PreAuthorize("hasAnyRole('DOCTOR','ADMIN')")
     public ResponseEntity<Void> updateStatus(
-            @PathVariable Long id, @Valid @RequestBody AppointmentStatusUpdateDTO body) {
+            @PathVariable Long id,
+            @Valid @RequestBody AppointmentStatusUpdateDTO body
+    ) {
         appointmentService.updateAppointmentStatus(id, body.getStatus());
         return ResponseEntity.noContent().build();
     }
